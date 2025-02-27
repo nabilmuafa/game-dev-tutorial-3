@@ -15,4 +15,7 @@ position = Vector2(789.149, 294.054)
 position = Vector2(225.95, 294.562)
 
 [node name="Player" parent="." instance=ExtResource("2_dx3w3")]
-position = Vector2(122, 208)
+position = Vector2(146, 208)
+jump_height = 200.0
+jump_time_to_peak = 0.45
+jump_time_to_descent = 0.35
