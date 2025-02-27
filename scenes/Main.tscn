@@ -6,16 +6,22 @@
 [node name="Root" type="Node2D"]
 
 [node name="Ground" parent="." instance=ExtResource("1")]
-position = Vector2(507.708, 363.86)
+position = Vector2(575.758, 612.806)
 
 [node name="Ground2" parent="." instance=ExtResource("1")]
-position = Vector2(789.149, 294.054)
+position = Vector2(857.199, 543)
 
 [node name="Ground3" parent="." instance=ExtResource("1")]
-position = Vector2(225.95, 294.562)
+position = Vector2(294, 543.508)
+
+[node name="Ground4" parent="." instance=ExtResource("1")]
+position = Vector2(804, 332)
+
+[node name="Ground5" parent="." instance=ExtResource("1")]
+position = Vector2(289, 147)
 
 [node name="Player" parent="." instance=ExtResource("2_dx3w3")]
-position = Vector2(146, 208)
+position = Vector2(215, 408)
 jump_height = 200.0
 jump_time_to_peak = 0.45
 jump_time_to_descent = 0.35
