@@ -9,12 +9,17 @@ extends CharacterBody2D
 @onready var fall_gravity : float = ((-2.0 * jump_height) / (jump_time_to_descent * jump_time_to_descent)) * -1
 
 @export var walk_speed = 500
+var jump_count = 0
 
 func _physics_process(delta):
-	velocity.y += get_custom_gravity() * delta
+	if not is_on_floor():
+		velocity.y += get_custom_gravity() * delta
+	else:
+		jump_count = 0
 	
-	if is_on_floor() and Input.is_action_just_pressed('ui_up'):
+	if jump_count < 2 and Input.is_action_just_pressed('ui_up'):
 		velocity.y = jump_velocity
+		jump_count += 1
 	
 	if Input.is_action_pressed("ui_left"):
 		velocity.x = -walk_speed
