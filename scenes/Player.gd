@@ -1,5 +1,7 @@
 extends CharacterBody2D
 
+@onready var anim = $AnimatedSprite2D
+
 @export var jump_height : float
 @export var jump_time_to_peak : float
 @export var jump_time_to_descent : float
@@ -8,7 +10,7 @@ extends CharacterBody2D
 @onready var jump_gravity : float = ((-2.0 * jump_height) / (jump_time_to_peak * jump_time_to_peak)) * -1
 @onready var fall_gravity : float = ((-2.0 * jump_height) / (jump_time_to_descent * jump_time_to_descent)) * -1
 
-@export var walk_speed = 500
+@export var walk_speed = 300
 @export var dash_speed = 1500
 @export var dash_duration = 0.5
 
@@ -38,6 +40,7 @@ func _physics_process(delta):
 		direction.x += 1
 	
 	if Input.is_action_just_pressed("ui_left"):
+		anim.flip_h = false
 		if Input.is_action_just_pressed("ui_left") and \
 		Time.get_ticks_msec() / 1000 - last_tap_time < run_tap_interval and \
 		direction.x == last_direction:
@@ -46,6 +49,7 @@ func _physics_process(delta):
 		last_direction = -1
 	
 	elif Input.is_action_just_pressed("ui_right"):
+		anim.flip_h = true
 		if Input.is_action_just_pressed("ui_right") and \
 		Time.get_ticks_msec() / 1000 - last_tap_time < run_tap_interval and \
 		direction.x == last_direction:
@@ -61,8 +65,10 @@ func _physics_process(delta):
 			velocity.x = lerp(velocity.x, walk_speed * direction.x, 5 * delta)
 	else:
 		if direction != Vector2.ZERO:
-				velocity.x = walk_speed * direction.x
+			anim.play("walk")
+			velocity.x = walk_speed * direction.x
 		else:
+			anim.play("idle")
 			velocity.x = 0
 		
 	move_and_slide()
@@ -77,7 +83,7 @@ func get_custom_gravity() -> float:
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	pass # Replace with function body.
+	anim.play("idle")
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
