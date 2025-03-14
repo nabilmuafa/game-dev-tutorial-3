@@ -1,12 +1,40 @@
-# Tutorial 3 Game Development
+# Tutorial 3 & 5 Game Development
 
 Muhammad Nabil Mu'afa - 2206024972
 
-## Implementasi Fitur Lanjutan
+## Tutorial 5
+
+### Implementasi Objek Baru
+
+Berhubung polishing saya pada Tutorial 3 sudah mengimplementasikan karakter dengan AnimatedSprite2D, saya membuat objek baru, yaitu koin yang bisa diambil oleh player. Untuk saat ini, koin belum memberikan efek apa-apa pada player selain menghilang ketika diambil.
+
+Untuk asset koin ini sendiri (dan sebagian besar update ini), saya menggunakan asset gratis dari Brackeys' Platformer Bundle (https://brackeysgames.itch.io/brackeys-platformer-bundle). Terdapat spritesheet koin yang bisa diimpor ke `AnimatedSprite2D`. Saya membuat scene `AnimatedSprite2D` baru untuk koin ini, lalu memasang child node `Area2D` dan `CollisionShape2D` untuk mendeteksi collision antara player dan objek koin. Ketika objek koin terkena player, akan dipanggil `queue_free()` yang menghapus node koin ini dari root node, sehingga koin tidak bisa diambil lagi.
+
+### Implementasi SFX
+
+Untuk mengimplementasikan SFX, saya memilih untuk mengimplementasikan suara lompat ala-ala 8-bit games. SFX ini akan di-play ketika player menekan spasi untuk lompat. Saya menggunakan asset gratis & no copyright yang saya temukan pada https://www.youtube.com/watch?v=Y8bSsRVr3Yg.
+
+Pada scene `Player` yang sudah ada, saya menambahkan child node berupa `AudioStreamPlayer2D` (yang saya rename menjadi `JumpSFX`). Pada node tersebut, saya mengimpor SFX lompat tersebut sebagai stream. Opsi `Playing`, `Autoplay`, dan `Stream Paused` tidak saya nyalakan, karena SFX ini akan di-play hanya ketika player lompat. Oleh karena itu, saya menambahkan baris kode `$JumpSFX.play()` pada bagian script `Player.gd` yang meng-handle velocity vertikal player ketika jump.
+
+### Implementasi BGM
+
+Untuk mengimplementasikan BGM, saya menggunakan asset yang saya temukan pada https://pixabay.com/music/search/platformer/ dengan nama "Game 8-Bit On". Saya menambahkan child node berupa `AudioStreamPlayer2D` (yang saya rename menjadi `BGM`). Pada node tersebut, saya mengimpor aset tersebut sebagai stream dan menyalakan opsi `Autoplay` agar BGM langsung dimainkan ketika player mulai bermain.
+
+### Implementasi Interaksi Objek Baru & Objek Player-Controlled
+
+Seperti yang sudah saya jelaskan sekilas pada poin pertama, saya mengimplementasikan objek koin yang bisa diambil oleh player dan kemudian menghilang dari scene setelah diambil. Pada node koin yang sudah dibuat, saya memasang child node `Area2D` dan `CollisionShape2D` untuk mendeteksi collision antara player dan objek koin. Ketika objek koin terkena player, akan dipanggil `queue_free()` yang menghapus node koin ini dari root node, sehingga koin tidak bisa diambil lagi.
+
+### Implementasi Audio Feedback Interaksi
+
+Untuk mengimplementasikan ini, saya menambahkan SFX yang dimainkan ketika player mengambil koin. Saya menggunakan asset koin yang tersedia pada Brackeys' Platformer Bundle. SFX ini ditambahkan sebagai node `AudioStreamPlayer2D` dan saya rename sebagai `CoinSFX`. Akan tetapi, `CoinSFX` ini saya tambahkan pada root node alih-alih pada node koin. Ini perlu dilakukan, karena apabila SFX ditambahkan pada node koin, ketika koin diambil player, nodenya akan dihapus (`queue_free()`), sehingga child node yang bertanggung jawab untuk memainkan SFX koin juga akan dihapus dan SFX tidak akan ter-play. Pada script dari scene koin ini, bisa ditambahkan baris kode yang mengambil objek dari root dengan `$"../CoinSFX".play()` pada bagian yang meng-handle collision antara player dan koin.
+
+## Tutorial 3
+
+### Implementasi Fitur Lanjutan
 
 Pada tutorial kali ini, saya memilih untuk mengimplementasikan **dua** fitur lanjutan terkait pergerakan player.
 
-### Double Jump
+#### Double Jump
 
 Untuk mengimplementasikan double jump, saya membuat sebuah variabel yang menghitung jumlah lompat player saat ini, bernama `jump_count`. Kemudian, bagian script yang memeriksa apakah player `is_in_floor()` sebelum lompat bisa dihapus dan diganti dengan memeriksa apakah `jump_count < 2`. Idenya, ketika player lompat sekali, maka `jump_count` akan di-increment. Player bisa melakukan jump sekali lagi dan `jump_count` akan kembali di-increment sehingga bernilai `2`. Jika `jump_count` sudah sama dengan `2`, player tidak bisa lompat lagi dan `jump_count` perlu di-reset jika player sudah kembali `is_in_floor()`. Di sini, perlu ada modifikasi pada baris kode yang menghitung _vertical velocity_ yang mempertimbangkan apakah player saat ini sedang `is_on_floor()`.
 
@@ -35,7 +63,7 @@ func _physics_process(delta):
 		jump_count += 1
 ```
 
-### Dash
+#### Dash
 
 Untuk mengimplementasikan dash, saya melakukan cukup banyak modifikasi. Sebelumnya, ketika tombol panah ditekan, yang akan di-update secara langsung adalah nilai `velocity.x` sesuai dengan arah jalan. Setelah modifikasi, variabel yang saya update secara langsung adalah `direction`, lalu baru ada assignment ke `velocity.x` yang mengalikan kecepatan player dengan direction (-1 ke kiri, 1 ke kanan).
 
@@ -154,9 +182,9 @@ func start_dash(dir):
 	velocity.x = dash_speed * dir
 ```
 
-## Polishing
+### Polishing
 
-### Custom Gravity
+#### Custom Gravity
 
 Menggunakan value-value yang ada di tutorial, saya merasa efek jump yang diimplementasikan kurang "enak", tidak seperti platformer-platformer lain yang pernah saya mainkan. Oleh karena itu, saya mencoba mengimplementasikan gravitasi sendiri. Untuk bagian ini, sebagian besar saya mereferensikan video ini: https://www.youtube.com/watch?v=IOe1aGY6hXA
 
@@ -187,7 +215,7 @@ func get_custom_gravity() -> float:
 	return jump_gravity if velocity.y > 0.0 else fall_gravity
 ```
 
-### Animated Sprite
+#### Animated Sprite
 
 Untuk implementasi animated sprite, sebagian besar saya mereferensikan video ini: https://www.youtube.com/watch?v=tfdXgiMwUBw
 
@@ -220,4 +248,7 @@ func _ready() -> void:
 
 [YouTube - Making a Jump You Can Actually Use In Godot](https://www.youtube.com/watch?v=IOe1aGY6hXA)  
 [YouTube - Godot 4.3 Double Jump Tutorial || Weekly Godot Challenge #17](https://www.youtube.com/watch?v=DW4CQoYddXQ)  
-[YouTube - Godot 4 Animated Sprite Tutorial | 2D & 3D](https://www.youtube.com/watch?v=tfdXgiMwUBw)
+[YouTube - Godot 4 Animated Sprite Tutorial | 2D & 3D](https://www.youtube.com/watch?v=tfdXgiMwUBw)  
+[Brackeys' Platformer Bundle](https://brackeysgames.itch.io/brackeys-platformer-bundle)  
+[8-Bit Jump Sound Effects (Copyright Free)](https://creatorassets.com/a/8-bit-jump-sound-effects)  
+[Pixabay, Platformer No Copyright Musics](https://pixabay.com/music/search/platformer/)

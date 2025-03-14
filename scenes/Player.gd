@@ -1,6 +1,7 @@
 extends CharacterBody2D
 
 @onready var anim = $AnimatedSprite2D
+@onready var coll = $CollisionShape2D
 
 @export var jump_height : float
 @export var jump_time_to_peak : float
@@ -10,13 +11,13 @@ extends CharacterBody2D
 @onready var jump_gravity : float = ((-2.0 * jump_height) / (jump_time_to_peak * jump_time_to_peak)) * -1
 @onready var fall_gravity : float = ((-2.0 * jump_height) / (jump_time_to_descent * jump_time_to_descent)) * -1
 
-@export var walk_speed = 300
+@export var walk_speed = 400
 @export var dash_speed = 1500
 @export var dash_duration = 0.5
 
 var jump_count = 0
 
-var run_tap_interval = 0.10
+var run_tap_interval = 150
 var last_tap_time = 0
 var last_direction = 0
 var is_dashing = false
@@ -30,31 +31,34 @@ func _physics_process(delta):
 	else:
 		jump_count = 0
 	
-	if jump_count < 2 and Input.is_action_just_pressed('ui_up'):
+	if jump_count < 2 and Input.is_action_just_pressed('up'):
+		$"JumpSFX".play()
 		velocity.y = jump_velocity
 		jump_count += 1
 	
-	if Input.is_action_pressed("ui_left"):
+	if Input.is_action_pressed("left"):
 		direction.x += -1
-	elif Input.is_action_pressed("ui_right"):
+	elif Input.is_action_pressed("right"):
 		direction.x += 1
 	
-	if Input.is_action_just_pressed("ui_left"):
+	if Input.is_action_just_pressed("left"):
 		anim.flip_h = false
-		if Input.is_action_just_pressed("ui_left") and \
-		Time.get_ticks_msec() / 1000 - last_tap_time < run_tap_interval and \
+		coll.position.x = abs(coll.position.x)*-1
+		if Input.is_action_just_pressed("left") and \
+		Time.get_ticks_msec() - last_tap_time < run_tap_interval and \
 		direction.x == last_direction:
 			start_dash(-1)
-		last_tap_time = Time.get_ticks_msec() / 1000
+		last_tap_time = Time.get_ticks_msec()
 		last_direction = -1
 	
-	elif Input.is_action_just_pressed("ui_right"):
+	elif Input.is_action_just_pressed("right"):
 		anim.flip_h = true
-		if Input.is_action_just_pressed("ui_right") and \
-		Time.get_ticks_msec() / 1000 - last_tap_time < run_tap_interval and \
+		coll.position.x = abs(coll.position.x)*1
+		if Input.is_action_just_pressed("right") and \
+		Time.get_ticks_msec() - last_tap_time < run_tap_interval and \
 		direction.x == last_direction:
 			start_dash(1)
-		last_tap_time = Time.get_ticks_msec() / 1000
+		last_tap_time = Time.get_ticks_msec()
 		last_direction = 1
 	
 	if is_dashing:

@@ -1,7 +1,8 @@
-[gd_scene load_steps=13 format=3 uid="uid://c3i22cumlxcgx"]
+[gd_scene load_steps=14 format=3 uid="uid://c3i22cumlxcgx"]
 
 [ext_resource type="Script" path="res://scenes/Player.gd" id="1_l4kae"]
 [ext_resource type="Texture2D" uid="uid://4vbobs55ppay" path="res://assets/DuckSpriteSheet.png" id="2_oyk5p"]
+[ext_resource type="AudioStream" uid="uid://c2ri7inornp8v" path="res://assets/sound5_edit.wav" id="3_21vw4"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5msno"]
 size = Vector2(44, 40)
@@ -87,3 +88,6 @@ texture_filter = 1
 scale = Vector2(2.5, 2.5)
 sprite_frames = SubResource("SpriteFrames_yd0ii")
 animation = &"idle"
+
+[node name="JumpSFX" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("3_21vw4")
